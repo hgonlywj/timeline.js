@@ -1,0 +1,26 @@
+diff --git a/src/timeline-gui.js b/src/timeline-gui.js
+index ae4f877..55d5953 100644
+--- a/src/timeline-gui.js
++++ b/src/timeline-gui.js
+@@ -818,7 +818,8 @@ Timeline.prototype.rebuildTrackAnimsFromKeys = function(track) {
+ 			delay: delay,
+ 			startTime: prevKeyTime,
+ 			endTime: key.time,
+-			easing: prevKeyEasing   
++			easing: prevKeyEasing,
++			container: track.container
+ 		};  			
+ 		track.anims.push(anim);  
+ 		this.anims.push(anim);
+diff --git a/src/timeline.js b/src/timeline.js
+index f8b8257..8322035 100644
+--- a/src/timeline.js
++++ b/src/timeline.js
+@@ -186,6 +186,7 @@ function Anim(name, target, timeline, startFunction, endFunction) {
+         target: target,
+         enabled: true,
+         parent: this.objectTrack,
++        container: this,
+         anims: [],
+         keys: []
+       };

@@ -818,7 +818,8 @@ Timeline.prototype.rebuildTrackAnimsFromKeys = function(track) {
 			delay: delay,
 			startTime: prevKeyTime,
 			endTime: key.time,
-			easing: prevKeyEasing   
+			easing: prevKeyEasing,
+			container: track.container
 		};  			
 		track.anims.push(anim);  
 		this.anims.push(anim);

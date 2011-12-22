@@ -275,7 +275,7 @@ Anim.prototype.to = function() {
     }
     
     for(var propertyName in properties) {
-        this.timeline.anims.push({ 
+        this.timeline.anims.push({
             timeline: this.timeline,
             targetName: this.name,  
             target: this.target,

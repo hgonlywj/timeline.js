@@ -23,15 +23,18 @@ var Timeline = function( parameters ) {
     this.loopCount = 0; 
     this.loopMode = 0;   
     this.playing = true;
-    this.setPropertyValue = this.parameters.setPropertyValue !== undefined ? this.parameters.setPropertyValue : function(propertyAnim, t) {
+    this.setPropertyValue = parameters.setPropertyValue !== undefined ? parameters.setPropertyValue : function(propertyAnim, t) {
       propertyAnim.target[propertyAnim.propertyName] = t;
     };
-    this.applyPropertyValue = this.parameters.applyPropertyValue !== undefined ? this.parameters.applyPropertyValue : function(propertyAnim, t) {
+    this.applyPropertyValue = parameters.applyPropertyValue !== undefined ? parameters.applyPropertyValue : function(propertyAnim, t) {
       propertyAnim.target[propertyAnim.propertyName] = propertyAnim.startValue + (propertyAnim.endValue - propertyAnim.startValue) * t;
     };
-    this.getPropertyValue = this.parameters.getPropertyValue !== undefined ? this.parameters.getPropertyValue : function(propertyAnim) {
+    this.getPropertyValue = parameters.getPropertyValue !== undefined ? parameters.getPropertyValue : function(propertyAnim) {
       return propertyAnim.target[propertyAnim.propertyName];
     };
+    
+    this.onStop = parameters.onStop !== undefined ? parameters.onStop : function() {};
+    this.onPlay = parameters.onPlay !== undefined ? parameters.onPlay : function(time) {};
 };
 
 Timeline.currentInstance = null;     
@@ -56,14 +59,17 @@ Timeline.prototype.stop = function() {
     this.playing = false;  
     this.time = 0;       
     this.prevTime = this.time - 1/30; //FIXME 1/30
+    this.onStop();
 };
 
 Timeline.prototype.pause = function() {
     this.playing = false;  
+    this.onStop();
 };
 
 Timeline.prototype.play = function() {
     this.playing = true;
+    this.onPlay(this.time);
 };
 
 Timeline.prototype.start = function() {

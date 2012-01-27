@@ -67,6 +67,7 @@ Timeline.prototype.initGUI = function( parameters ) {
 	document.body.appendChild(this.container);     
   
   this.splitter = document.createElement("div");
+  this.splitter.id = "timeline-splitter"
   this.splitter.style.width = "100%";       
   this.splitter.style.height = "4px";
   this.splitter.style.cursor = "ns-resize";

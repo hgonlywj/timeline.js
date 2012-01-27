@@ -51,6 +51,7 @@ Timeline.prototype.initGUI = function( parameters ) {
   this.colorObjectLabel = parameters.colorObjectLabel !== undefined ? parameters.colorObjectLabel : "#000000";
   this.colorPropertyLabel = parameters.colorPropertyLabel !== undefined ? parameters.colorPropertyLabel : "#555555";
   this.onTrackRebuild = parameters.onTrackRebuild !== undefined ? parameters.onTrackRebuild : function(){};
+  this.onGuiSave = parameters.onGuiSave !== undefined ? parameters.onGuiSave : function(){};
             
   this.trackNameCounter = 0; 
   this.initTracks();
@@ -911,6 +912,7 @@ Timeline.prototype.save = function() {
   localStorage["timeline.js.settings.canvasHeight"] = this.canvasHeight;                              
   localStorage["timeline.js.settings.timeScale"] = this.timeScale;                              
   localStorage["timeline.js.data." + this.name] = JSON.stringify(data);
+  this.onGuiSave();
 } 
 
 Timeline.prototype.load = function() {      

@@ -77,7 +77,8 @@ Timeline.prototype.initGUI = function( parameters ) {
 	this.splitter.style.bottom = (this.canvasHeight - 2) + "px";   
 	this.splitter.addEventListener("mousedown", function() {
 	  function mouseMove(e) {         
-	    var h = (window.innerHeight - e.clientY);  
+	    var h = (window.innerHeight - e.clientY);
+	    h = Math.max(h, 46);
 	    self.splitter.style.bottom = (h - 2) + "px";
 	    self.container.style.height = h + "px";
 	    self.canvasHeight = h;     	                                     
@@ -415,7 +416,38 @@ Timeline.prototype.updateGUI = function() {
     
   
   this.c.clearRect(0, 0, w, h);   
-                   
+  
+  //timeline
+                 
+  var timelineStart = 0;
+  var timelineEnd = 10; 
+  var lastTimeLabelX = 0;   
+                                                                                 
+  this.c.fillStyle = this.colorTimelineLabel;  
+  var x = this.timeToX(0);
+  //for(var sec=timelineStart; sec<timelineEnd; sec++) {                               
+  var sec = timelineStart;
+  while(x < this.canvas.width) {  
+    x = this.timeToX(sec);
+    this.drawLine(x, 0, x, this.headerHeight*0.3, this.colorTimelineTick); 
+               
+    var minutes = Math.floor(sec / 60);
+    var seconds = sec % 60;
+    var time = minutes + ":" + ((seconds < 10) ? "0" : "") + seconds;
+    
+    if (x - lastTimeLabelX > 30) {
+      this.c.fillText(time, x - 6, this.headerHeight*0.8);    
+      lastTimeLabelX = x;
+    }   
+    sec += 1;
+  }    
+  
+  //time ticker
+  this.drawLine(this.timeToX(this.time), 0, this.timeToX(this.time), h, this.colorTimeTicker); 
+  
+  // sidebar background
+  this.drawRect(0, 0, this.trackLabelWidth, this.canvasHeight, this.colorBackground);
+  
   //buttons  
   this.drawRect(0*this.headerHeight - 4 * -1, 5, this.headerHeight - 8, this.headerHeight - 8, this.colorButtonBackground); 
   this.drawRect(1*this.headerHeight - 4 *  0, 5, this.headerHeight - 8, this.headerHeight - 8, this.colorButtonBackground); 
@@ -471,34 +503,6 @@ Timeline.prototype.updateGUI = function() {
                                                        
   //end of label panel
   this.drawLine(this.trackLabelWidth, 0, this.trackLabelWidth, h, "#000000");
-    
-  //timeline
-                 
-  var timelineStart = 0;
-  var timelineEnd = 10; 
-  var lastTimeLabelX = 0;   
-                                                                                 
-  this.c.fillStyle = this.colorTimelineLabel;  
-  var x = this.timeToX(0);
-  //for(var sec=timelineStart; sec<timelineEnd; sec++) {                               
-  var sec = timelineStart;
-  while(x < this.canvas.width) {  
-    x = this.timeToX(sec);
-    this.drawLine(x, 0, x, this.headerHeight*0.3, this.colorTimelineTick); 
-               
-    var minutes = Math.floor(sec / 60);
-    var seconds = sec % 60;
-    var time = minutes + ":" + ((seconds < 10) ? "0" : "") + seconds;
-    
-    if (x - lastTimeLabelX > 30) {
-      this.c.fillText(time, x - 6, this.headerHeight*0.8);    
-      lastTimeLabelX = x;
-    }   
-    sec += 1;
-  }    
-  
-  //time ticker
-  this.drawLine(this.timeToX(this.time), 0, this.timeToX(this.time), h, this.colorTimeTicker); 
   
   //time scale
   
@@ -579,8 +583,12 @@ Timeline.prototype.drawTrack = function(track, y) {
       }
       var first = (i == 0);
       var last = (i == track.keys.length - 1);
-      this.drawRombus(this.timeToX(key.time), y - this.trackLabelHeight*0.5, this.trackLabelHeight*0.5, this.trackLabelHeight*0.5, "#999999", true, true, selected ? "#FF0000" : "#666666");
-      this.drawRombus(this.timeToX(key.time), y - this.trackLabelHeight*0.5, this.trackLabelHeight*0.5, this.trackLabelHeight*0.5, "#DDDDDD", !first, !last);      
+      var dx = this.timeToX(key.time);
+      // don't draw if it's under label
+      if (dx >= this.trackLabelWidth) {
+        this.drawRombus(dx, y - this.trackLabelHeight*0.5, this.trackLabelHeight*0.5, this.trackLabelHeight*0.5, "#999999", true, true, selected ? "#FF0000" : "#666666");
+        this.drawRombus(dx, y - this.trackLabelHeight*0.5, this.trackLabelHeight*0.5, this.trackLabelHeight*0.5, "#DDDDDD", !first, !last);
+      } 
     }
   }
 }
